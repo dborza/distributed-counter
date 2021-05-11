@@ -10,6 +10,7 @@ Load testing - https://octoperf.com/blog/2017/10/26/how-to-install-jmeter-mac/
 
 You can use [httperf](https://github.com/httperf/httperf) and use it like
 
+I could install it with `brew install httperf` on MacOS.
 ```
 httperf --server localhost --port 8081 --num-conns 80 --rate 10000 --timeout 1
 ```
