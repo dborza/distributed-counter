@@ -54,3 +54,9 @@ Number of 5xx responses:                            0
 
 ===========================================================================
 ```
+
+# Implement counter in Cassandra
+
+## Install Cassandra
+
+[link](https://gist.github.com/hkhamm/a9a2b45dd749e5d3b3ae)
