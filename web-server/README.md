@@ -55,8 +55,46 @@ Number of 5xx responses:                            0
 ===========================================================================
 ```
 
-# Implement counter in Cassandra
+# Implement counter in CockroachDB
 
-## Install Cassandra
+## Install CockroachDB
 
-[link](https://gist.github.com/hkhamm/a9a2b45dd749e5d3b3ae)
+## Run CockroachDB
+
+`cockroach start-single-node --insecure --listen-addr=localhost`
+
+## Create counter schema
+
+`cockroach sql --insecure < dbschema/cockroachdb/counter-schema.sql`
+
+## Select the default counter value
+
+`cockroach sql --insecure --execute="use counter_db; select * from counter;""`
+
+You should see something like
+
+```
+  id | value
+-----+--------
+   1 |     0
+(1 row)
+```
+
+Update counter
+
+`cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
+`cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
+`cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
+`cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
+`cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
+
+Show counter
+
+
+`cockroach sql --insecure --execute="use counter_db; select * from counter;"`
+```
+  id | value
+-----+--------
+   1 |     5
+(1 row)
+```
