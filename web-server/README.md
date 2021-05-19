@@ -67,28 +67,11 @@ Number of 5xx responses:                            0
 
 `cockroach sql --insecure < dbschema/cockroachdb/counter-schema.sql`
 
-## Select the default counter value
-
-`cockroach sql --insecure --execute="use counter_db; select * from counter;""`
-
-You should see something like
-
-```
-  id | value
------+--------
-   1 |     0
-(1 row)
-```
-
-Update counter
+### SQL Update counter
 
 `cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
-`cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
-`cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
-`cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
-`cockroach sql --insecure --execute="use counter_db; update counter set value=value+1 where id=1;`
 
-Show counter
+### SQL Show counter
 
 
 `cockroach sql --insecure --execute="use counter_db; select * from counter;"`
@@ -98,3 +81,11 @@ Show counter
    1 |     5
 (1 row)
 ```
+
+## Run web server for db operations
+
+`go run serverdb.go`
+
+## Run load test for db operations
+
+`~/go/bin/baton -u http://localhost:8081/inc-cockroachdb -c 2 -r 100 `

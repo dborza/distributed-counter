@@ -1,62 +1,34 @@
 package main
 
 import (
-    "fmt"
-    "html"
     "log"
     "net/http"
-    "sync/atomic"
     "context"
 
-    //"github.com/cockroachdb/cockroach-go/v2/crdb/crdbpgx"
-    "github.com/jackc/pgx/v4"
+    "github.com/jackc/pgx/v4/pgxpool"
 )
 
 func main() {
 
-    config, err := pgx.ParseConfig("postgres://root@localhost:26257/counter_db.counter?sslmode=disable")
+
+    // Set connection pool configuration, with maximum connection pool size.
+    config, err := pgxpool.ParseConfig("postgres://root@localhost:26257/counter_db.counter?sslmode=disable&pool_max_conns=40")
     if err != nil {
         log.Fatal("error configuring the database: ", err)
     }
 
-    //config.TLSConfig.ServerName = "localhost"
-
-    conn, err := pgx.ConnectConfig(context.Background(), config)
+    // Create a connection pool to the "bank" database.
+    conn, err := pgxpool.ConnectConfig(context.Background(), config)
     if err != nil {
         log.Fatal("error connecting to the database: ", err)
     }
-    defer conn.Close(context.Background())
-
-    if _, err := conn.Exec(context.Background(),
-        "UPDATE counter_db.counter SET value=value+1 where id=1;"); err != nil {
-        log.Fatal(err)
-    }
-
-    http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-        fmt.Fprintf(w, "Hello, %q", html.EscapeString(r.URL.Path))
-    })
-
-    http.HandleFunc("/hi", func(w http.ResponseWriter, r *http.Request){
-        fmt.Fprintf(w, "Hi")
-    })
-
-    var ops uint64
+    defer conn.Close()
 
     http.HandleFunc("/inc-cockroachdb", func(w http.ResponseWriter, r *http.Request){
         if _, err := conn.Exec(context.Background(),
             "UPDATE counter_db.counter SET value=value+1 where id=1;"); err != nil {
             log.Fatal(err)
         }
-        fmt.Fprintf(w, "inc-cockroachdb")
-    })
-
-    http.HandleFunc("/inc", func(w http.ResponseWriter, r *http.Request){
-        atomic.AddUint64(&ops, 1)
-        fmt.Fprintf(w, "Count: %d", ops)
-    })
-
-    http.HandleFunc("/get", func(w http.ResponseWriter, r *http.Request){
-        fmt.Fprintf(w, "Count: %d", ops)
     })
 
     log.Fatal(http.ListenAndServe(":8081", nil))
